@@ -1,4 +1,4 @@
-# Cadence — On-Premises AI Debug Assistant
+# Engineering Debug Assistant — RAG-powered Bug Fix Search
 
 An on-premises RAG system that helps engineers diagnose bugs faster by searching historical fixes using natural language. Describe a crash, hang, or error in plain English and the system retrieves the most relevant historical bug fixes, root causes, and actual code patches — then synthesizes a grounded, cited answer using an LLM. No data leaves your infrastructure unless you choose a cloud LLM provider.
 
