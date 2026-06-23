@@ -6,7 +6,7 @@ An on-premises RAG system that helps engineers diagnose bugs faster by searching
 
 ## Demo
 
-<video src="demos/demo1.mp4" controls width="100%"></video>
+[Watch demo video](demos/demo1.mp4)
 
 ---
 
