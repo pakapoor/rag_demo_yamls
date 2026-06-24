@@ -185,7 +185,7 @@ React UI  (port 3000)
   TL;DR panel │ Explanation panel │ Code Fix (diff, syntax-highlighted) │ Citations
 ```
 
-![System Architecture](docs/debug_assistant_architecture.svg)
+![System Architecture](docs/system_design.svg)
 
 ### Ingestion Flow
 
