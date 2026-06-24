@@ -8,6 +8,37 @@ An on-premises RAG system that helps engineers diagnose bugs faster by searching
 
 ---
 
+## Usage
+
+Open [http://localhost:3000](http://localhost:3000) and describe your bug in plain English.
+
+**Example queries:**
+
+```text
+crash in generic.py around line 2393 not related to scheduler
+DataFrame groupby aggregate memory error
+BUG duplicated loses index
+hang in the dispatcher not a.cpp
+```
+
+**What you get back:**
+
+| Panel | Content |
+| ----- | ------- |
+| TL;DR | One-sentence summary of the root cause and fix |
+| Explanation | 2–3 paragraph analysis grounded in the historical commit |
+| Code Fix | The actual diff from the fix, syntax-highlighted |
+| Citations | Commit SHAs linking back to the source |
+
+**Query tips:**
+
+- Include a **signal word**: crash, hang, segfault, memory error, assertion, timeout
+- Name a **file or function** if you know it: `groupby`, `generic.py`, `DataFrame`
+- Use **negations** to exclude irrelevant matches: `not scheduler`, `not a.cpp`
+- Vague queries like `"it crashed"` trigger a clarifying follow-up — add more detail and resubmit
+
+---
+
 ## Deployment
 
 ### System Requirements
@@ -110,16 +141,9 @@ This starts all services automatically:
 | Answer API | [http://localhost:8002](http://localhost:8002) |
 | React UI | [http://localhost:3000](http://localhost:3000) |
 
-### Step 6 — Try a query
+### Step 6 — Open the UI
 
-Open [http://localhost:3000](http://localhost:3000) and try:
-
-```text
-crash in generic.py around line 2393 not related to scheduler
-DataFrame groupby aggregate memory error
-BUG duplicated loses index
-hang in the dispatcher not a.cpp
-```
+Open [http://localhost:3000](http://localhost:3000). The system is ready. See the **Usage** section above for example queries and tips.
 
 ---
 
