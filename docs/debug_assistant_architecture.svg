@@ -1,49 +1,139 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="680" height="480" font-family="'Segoe UI', Arial, sans-serif">
-  <rect width="680" height="480" fill="#f6f8fa" rx="10"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="572" font-family="'Segoe UI', Arial, sans-serif">
+  <rect width="760" height="572" fill="#f6f8fa" rx="10"/>
 
   <defs>
     <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
       <path d="M0,0 L0,6 L8,3 z" fill="#8c959f"/>
     </marker>
+    <marker id="arr-up" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#1a7f37"/>
+    </marker>
   </defs>
 
   <!-- Title -->
-  <text x="340" y="34" text-anchor="middle" font-size="15" font-weight="bold" fill="#1f2328">System Architecture</text>
+  <text x="380" y="26" text-anchor="middle" font-size="15" font-weight="bold" fill="#1f2328">System Architecture</text>
 
-  <!-- Box 1: User -->
-  <rect x="230" y="52" width="220" height="44" rx="6" fill="#0969da"/>
-  <text x="340" y="79" text-anchor="middle" font-size="13" font-weight="600" fill="#ffffff">Engineer types query</text>
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- TIER 1: FRONTEND                           -->
+  <!-- ═══════════════════════════════════════════ -->
+  <rect x="16" y="36" width="728" height="62" rx="6" fill="#ddf4ff" stroke="#0969da" stroke-width="1.5"/>
+  <text x="26" y="52" font-size="9" font-weight="700" fill="#0969da" letter-spacing="1">FRONTEND</text>
+  <!-- React UI component -->
+  <rect x="240" y="46" width="280" height="40" rx="5" fill="#0969da"/>
+  <text x="380" y="63" text-anchor="middle" font-size="13" font-weight="600" fill="#ffffff">React UI</text>
+  <text x="380" y="79" text-anchor="middle" font-size="11" fill="#cae8ff">port 3000  ·  TL;DR · Explanation · Code Fix · Citations</text>
 
-  <line x1="340" y1="96" x2="340" y2="116" stroke="#8c959f" stroke-width="1.5" marker-end="url(#arr)"/>
+  <!-- Arrow FRONTEND → API -->
+  <line x1="380" y1="98" x2="380" y2="116" stroke="#8c959f" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="388" y="110" font-size="9" fill="#8c959f">HTTP / REST</text>
 
-  <!-- Box 2: Query Understanding -->
-  <rect x="140" y="116" width="400" height="68" rx="6" fill="#ffffff" stroke="#d0d7de" stroke-width="1.5"/>
-  <text x="340" y="140" text-anchor="middle" font-size="13" font-weight="600" fill="#1f2328">Query Understanding</text>
-  <text x="340" y="160" text-anchor="middle" font-size="11" fill="#656d76">LLM → { signal, file, function, negations, confidence }</text>
-  <text x="340" y="176" text-anchor="middle" font-size="11" fill="#cf222e">confidence = "low"  →  return follow-up, no search</text>
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- TIER 2: API LAYER                          -->
+  <!-- ═══════════════════════════════════════════ -->
+  <rect x="16" y="116" width="728" height="96" rx="6" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1.5"/>
+  <text x="26" y="132" font-size="9" font-weight="700" fill="#57606a" letter-spacing="1">API LAYER</text>
+  <!-- Answer API -->
+  <rect x="50" y="128" width="280" height="72" rx="5" fill="#ffffff" stroke="#d0d7de" stroke-width="1.2"/>
+  <text x="190" y="150" text-anchor="middle" font-size="12" font-weight="600" fill="#1f2328">Answer API</text>
+  <text x="190" y="168" text-anchor="middle" font-size="11" fill="#656d76">answer_api.py  ·  port 8002</text>
+  <text x="190" y="184" text-anchor="middle" font-size="10" fill="#8c959f">query understanding · prompt build · LLM call · parse</text>
+  <!-- Hybrid Search API -->
+  <rect x="430" y="128" width="280" height="72" rx="5" fill="#ffffff" stroke="#d0d7de" stroke-width="1.2"/>
+  <text x="570" y="150" text-anchor="middle" font-size="12" font-weight="600" fill="#1f2328">Hybrid Search API</text>
+  <text x="570" y="168" text-anchor="middle" font-size="11" fill="#656d76">hybrid_api.py  ·  port 8001</text>
+  <text x="570" y="184" text-anchor="middle" font-size="10" fill="#8c959f">BM25 + vector search · RRF scoring · top-3</text>
 
-  <line x1="340" y1="184" x2="340" y2="204" stroke="#8c959f" stroke-width="1.5" marker-end="url(#arr)"/>
+  <!-- Arrow API → Processing (left) -->
+  <line x1="190" y1="212" x2="190" y2="232" stroke="#8c959f" stroke-width="1.5" marker-end="url(#arr)"/>
+  <!-- Arrow API → Storage (right, direct from hybrid search) -->
+  <line x1="570" y1="212" x2="570" y2="350" stroke="#8c959f" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arr)"/>
 
-  <!-- Box 3: Hybrid Search API -->
-  <rect x="100" y="204" width="480" height="88" rx="6" fill="#ffffff" stroke="#d0d7de" stroke-width="1.5"/>
-  <text x="340" y="228" text-anchor="middle" font-size="13" font-weight="600" fill="#1f2328">Hybrid Search API  ·  port 8001</text>
-  <text x="180" y="252" font-size="11" fill="#656d76">▸  BM25 full-text search  (PostgreSQL tsvector)</text>
-  <text x="180" y="268" font-size="11" fill="#656d76">▸  Vector cosine search  (pgvector · BGE-small · 384-dim)</text>
-  <text x="180" y="284" font-size="11" fill="#656d76">▸  Custom RRF scoring  (bug boost +50 / doc penalty −30)</text>
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- TIER 3: PROCESSING / CORE LOGIC            -->
+  <!-- ═══════════════════════════════════════════ -->
+  <rect x="16" y="232" width="480" height="96" rx="6" fill="#fff8c5" stroke="#d4a72c" stroke-width="1.5"/>
+  <text x="26" y="248" font-size="9" font-weight="700" fill="#9a6700" letter-spacing="1">CORE LOGIC</text>
+  <!-- query_understanding -->
+  <rect x="36" y="248" width="180" height="68" rx="5" fill="#ffffff" stroke="#d4a72c" stroke-width="1"/>
+  <text x="126" y="270" text-anchor="middle" font-size="11" font-weight="600" fill="#1f2328">query_understanding.py</text>
+  <text x="126" y="286" text-anchor="middle" font-size="10" fill="#656d76">LLM structured extraction</text>
+  <text x="126" y="300" text-anchor="middle" font-size="10" fill="#656d76">confidence gate</text>
+  <!-- prompt_builder -->
+  <rect x="236" y="248" width="140" height="68" rx="5" fill="#ffffff" stroke="#d4a72c" stroke-width="1"/>
+  <text x="306" y="270" text-anchor="middle" font-size="11" font-weight="600" fill="#1f2328">prompt_builder.py</text>
+  <text x="306" y="286" text-anchor="middle" font-size="10" fill="#656d76">grounded context</text>
+  <text x="306" y="300" text-anchor="middle" font-size="10" fill="#656d76">injection</text>
+  <!-- llm_client -->
+  <rect x="396" y="248" width="82" height="68" rx="5" fill="#ffffff" stroke="#d4a72c" stroke-width="1"/>
+  <text x="437" y="270" text-anchor="middle" font-size="11" font-weight="600" fill="#1f2328">llm_client</text>
+  <text x="437" y="286" text-anchor="middle" font-size="10" fill="#656d76">provider-</text>
+  <text x="437" y="300" text-anchor="middle" font-size="10" fill="#656d76">agnostic</text>
 
-  <line x1="340" y1="292" x2="340" y2="312" stroke="#8c959f" stroke-width="1.5" marker-end="url(#arr)"/>
+  <!-- Arrow llm_client → External LLM (horizontal right) -->
+  <line x1="478" y1="282" x2="516" y2="282" stroke="#d4a72c" stroke-width="1.5" marker-end="url(#arr)"/>
 
-  <!-- Box 4: Answer API -->
-  <rect x="100" y="312" width="480" height="88" rx="6" fill="#ffffff" stroke="#d0d7de" stroke-width="1.5"/>
-  <text x="340" y="336" text-anchor="middle" font-size="13" font-weight="600" fill="#1f2328">Answer API  ·  port 8002</text>
-  <text x="180" y="360" font-size="11" fill="#656d76">▸  prompt_builder.py  (grounded context injection)</text>
-  <text x="180" y="376" font-size="11" fill="#656d76">▸  llm_client.py  (provider-agnostic: Gemini / Groq / Ollama)</text>
-  <text x="180" y="392" font-size="11" fill="#656d76">▸  Parse response  →  { tldr, explanation, code, citations }</text>
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- TIER 4a: EXTERNAL (right, same row)        -->
+  <!-- ═══════════════════════════════════════════ -->
+  <rect x="516" y="232" width="228" height="96" rx="6" fill="#fff1e5" stroke="#bc4c00" stroke-width="1.5"/>
+  <text x="526" y="248" font-size="9" font-weight="700" fill="#bc4c00" letter-spacing="1">EXTERNAL  (cloud / local)</text>
+  <rect x="536" y="252" width="188" height="64" rx="5" fill="#ffffff" stroke="#bc4c00" stroke-width="1"/>
+  <text x="630" y="274" text-anchor="middle" font-size="12" font-weight="600" fill="#1f2328">LLM Provider</text>
+  <text x="630" y="292" text-anchor="middle" font-size="11" fill="#656d76">Gemini  ·  Groq  ·  Ollama</text>
+  <text x="630" y="306" text-anchor="middle" font-size="10" fill="#8c959f">swappable via llm_client.py</text>
 
-  <line x1="340" y1="400" x2="340" y2="420" stroke="#8c959f" stroke-width="1.5" marker-end="url(#arr)"/>
+  <!-- Arrow Processing → Storage -->
+  <line x1="190" y1="328" x2="190" y2="350" stroke="#8c959f" stroke-width="1.5" marker-end="url(#arr)"/>
 
-  <!-- Box 5: React UI -->
-  <rect x="140" y="420" width="400" height="44" rx="6" fill="#1a7f37"/>
-  <text x="340" y="442" text-anchor="middle" font-size="13" font-weight="600" fill="#ffffff">React UI  ·  port 3000</text>
-  <text x="340" y="458" text-anchor="middle" font-size="11" fill="#d3f8de">TL;DR  ·  Explanation  ·  Code Fix  ·  Citations</text>
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- TIER 4b: DATA LAYER                        -->
+  <!-- ═══════════════════════════════════════════ -->
+  <rect x="16" y="350" width="728" height="108" rx="6" fill="#e6f4ea" stroke="#1a7f37" stroke-width="1.5"/>
+  <text x="26" y="366" font-size="9" font-weight="700" fill="#1a7f37" letter-spacing="1">DATA LAYER</text>
+  <!-- Outer Postgres box -->
+  <rect x="36" y="366" width="440" height="80" rx="5" fill="#ffffff" stroke="#1a7f37" stroke-width="1.2"/>
+  <text x="256" y="385" text-anchor="middle" font-size="12" font-weight="600" fill="#1f2328">PostgreSQL 16 + pgvector  (Docker container)</text>
+  <!-- tsvector index sub-box -->
+  <rect x="52" y="392" width="190" height="44" rx="4" fill="#e6f4ea" stroke="#1a7f37" stroke-width="1"/>
+  <text x="147" y="410" text-anchor="middle" font-size="11" font-weight="600" fill="#1f2328">tsvector  ·  GIN index</text>
+  <text x="147" y="428" text-anchor="middle" font-size="10" fill="#656d76">BM25 full-text search</text>
+  <!-- vector index sub-box -->
+  <rect x="262" y="392" width="200" height="44" rx="4" fill="#e6f4ea" stroke="#1a7f37" stroke-width="1"/>
+  <text x="362" y="410" text-anchor="middle" font-size="11" font-weight="600" fill="#1f2328">vector(384)  ·  HNSW</text>
+  <text x="362" y="428" text-anchor="middle" font-size="10" fill="#656d76">cosine similarity search</text>
+  <!-- config.py note -->
+  <rect x="496" y="366" width="234" height="80" rx="5" fill="#ffffff" stroke="#1a7f37" stroke-width="1.2"/>
+  <text x="613" y="388" text-anchor="middle" font-size="12" font-weight="600" fill="#1f2328">config.py</text>
+  <text x="613" y="406" text-anchor="middle" font-size="11" fill="#656d76">POSTGRES_URL</text>
+  <text x="613" y="422" text-anchor="middle" font-size="11" fill="#656d76">GOOGLE_API_KEY</text>
+  <text x="613" y="438" text-anchor="middle" font-size="10" fill="#8c959f">loaded from .env via python-dotenv</text>
+
+  <!-- Arrow Ingestion → Data (going up) -->
+  <line x1="256" y1="490" x2="256" y2="458" stroke="#1a7f37" stroke-width="1.5" marker-end="url(#arr-up)"/>
+  <text x="264" y="480" font-size="9" fill="#1a7f37">one-time ingestion</text>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- TIER 5: INGESTION PIPELINE                 -->
+  <!-- ═══════════════════════════════════════════ -->
+  <rect x="16" y="490" width="728" height="68" rx="6" fill="#efefef" stroke="#8c959f" stroke-width="1.5"/>
+  <text x="26" y="506" font-size="9" font-weight="700" fill="#57606a" letter-spacing="1">INGESTION PIPELINE  (one-time setup)</text>
+  <!-- Git Repo -->
+  <rect x="36" y="510" width="116" height="36" rx="4" fill="#ffffff" stroke="#8c959f" stroke-width="1"/>
+  <text x="94" y="524" text-anchor="middle" font-size="10" font-weight="600" fill="#1f2328">Your Git Repo</text>
+  <text x="94" y="538" text-anchor="middle" font-size="9" fill="#656d76">~/rag_data/project</text>
+  <line x1="152" y1="528" x2="172" y2="528" stroke="#8c959f" stroke-width="1.5" marker-end="url(#arr)"/>
+  <!-- ingest_commits -->
+  <rect x="172" y="510" width="148" height="36" rx="4" fill="#ffffff" stroke="#8c959f" stroke-width="1"/>
+  <text x="246" y="524" text-anchor="middle" font-size="10" font-weight="600" fill="#1f2328">ingest_commits.py</text>
+  <text x="246" y="538" text-anchor="middle" font-size="9" fill="#656d76">commits + patches</text>
+  <line x1="320" y1="528" x2="340" y2="528" stroke="#8c959f" stroke-width="1.5" marker-end="url(#arr)"/>
+  <!-- create_patch -->
+  <rect x="340" y="510" width="188" height="36" rx="4" fill="#ffffff" stroke="#8c959f" stroke-width="1"/>
+  <text x="434" y="524" text-anchor="middle" font-size="10" font-weight="600" fill="#1f2328">create_patch_child_chunks.py</text>
+  <text x="434" y="538" text-anchor="middle" font-size="9" fill="#656d76">AST · function context</text>
+  <line x1="528" y1="528" x2="548" y2="528" stroke="#8c959f" stroke-width="1.5" marker-end="url(#arr)"/>
+  <!-- compute_embeddings -->
+  <rect x="548" y="510" width="178" height="36" rx="4" fill="#ffffff" stroke="#8c959f" stroke-width="1"/>
+  <text x="637" y="524" text-anchor="middle" font-size="10" font-weight="600" fill="#1f2328">compute_embeddings.py</text>
+  <text x="637" y="538" text-anchor="middle" font-size="9" fill="#656d76">BGE-small · 384-dim vectors</text>
 </svg>
