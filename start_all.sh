@@ -71,7 +71,7 @@ fatal() {
 
 echo ""
 echo -e "${BOLD}╔══════════════════════════════════════╗${NC}"
-echo -e "${BOLD}║      Cadence Debug Assistant         ║${NC}"
+echo -e "${BOLD}║      Debug Assistant         ║${NC}"
 echo -e "${BOLD}╚══════════════════════════════════════╝${NC}"
 
 # Stop any running services first

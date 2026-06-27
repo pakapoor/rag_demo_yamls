@@ -5,7 +5,7 @@ import time
 import logging
 import json
 from pathlib import Path
-from config import SEARCH_URL
+from config import SEARCH_URL, GOOGLE_MODEL
 from query_understanding import extract_query
 from prompt_builder import build_prompt
 from llm_client import ask_llm
@@ -176,7 +176,7 @@ def ask(q: str):
 
     response_time = time.time() - start_time
     log_request("/ask", q, response_time, "ok", {
-        "model": __import__("config").GOOGLE_MODEL,
+        "model": GOOGLE_MODEL,
         "results_used": len(results),
         "citations": len(citations),
         "negations": parsed.get("negations", []),
