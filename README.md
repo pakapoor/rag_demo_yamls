@@ -12,6 +12,59 @@ An on-premises RAG system that helps engineers diagnose bugs faster by searching
 
 ---
 
+## Quickstart
+
+Follow these three steps to get a local instance running for development or evaluation.
+
+1. Copy the environment template and set secrets:
+
+```bash
+cp .env.example .env
+# Edit .env and set your API key(s). Example:
+# GOOGLE_API_KEY=your_key_here
+# GOOGLE_MODEL=gemini-3.1-flash-lite
+```
+
+2. Start services:
+
+```bash
+./start_all.sh
+```
+
+3. Open the UI in your browser:
+
+[http://localhost:3000](http://localhost:3000)
+
+## Environment
+
+Key environment variables used by the project. Put these in `.env` or export them in your shell for local runs.
+
+- `POSTGRES_URL` — Postgres connection string (e.g. `postgresql://user:pass@localhost:5432/dbname`)
+- `GOOGLE_API_KEY` — Google Gemini API key (optional if using another LLM provider)
+- `GOOGLE_MODEL` — e.g. `gemini-3.1-flash-lite` (provider-specific model id)
+- `FLAG_EMBEDDING_MODEL` — embedding model id (default: `BAAI/bge-small-en-v1.5`)
+- `PGVECTOR_DIM` — embedding dimension (must match the model, default `384`)
+- `PROJECT` — project name used by ingestion scripts (set before running ingestion)
+
+Example `.env` snippet:
+
+```text
+# PostgreSQL
+POSTGRES_URL=postgresql://postgres:postgres@localhost:5432/debugdb
+
+# LLM
+GOOGLE_API_KEY=your_key_here
+GOOGLE_MODEL=gemini-3.1-flash-lite
+
+# Embeddings
+FLAG_EMBEDDING_MODEL=BAAI/bge-small-en-v1.5
+PGVECTOR_DIM=384
+
+# Ingest
+PROJECT=pandas
+```
+
+
 ## Demo
 
 <video src="https://github.com/user-attachments/assets/cf2fd47e-c705-49d4-9d5e-13940619d0fc" controls width="100%"></video>
@@ -733,3 +786,65 @@ tail -f logs/answer_api.log
 # View React UI compilation output
 tail -f logs/react_ui.log
 ```
+
+## Ingestion checklist
+
+Use this quick checklist when ingesting a repo to ensure all stages completed successfully.
+
+- Set `PROJECT` consistently in `ingest_commits.py` and `create_patch_child_chunks.py`.
+- Run ingestion stages in order:
+
+```bash
+python3 ingest_commits.py
+python3 create_patch_child_chunks.py
+python3 app/compute_embeddings.py
+```
+
+- Verify DB rows and embeddings:
+
+```sql
+SELECT count(*) FROM chunks WHERE project='your-project-name';
+SELECT count(*) FROM chunks WHERE project='your-project-name' AND embedding IS NOT NULL;
+```
+
+- If embeddings are missing, re-run `app/compute_embeddings.py` and inspect console logs for provider errors or rate limiting.
+- For very large repositories, ingest in smaller `LIMIT` batches and monitor Postgres disk usage.
+
+## Troubleshooting & FAQ
+
+- UI shows no results: verify `hybrid_api.py` and `answer_api.py` are running and `POSTGRES_URL` points at the right DB.
+- Embedding dimension mismatch: ensure `PGVECTOR_DIM` matches the model (default `384`). If wrong, reinitialize the DB schema on a fresh database.
+- `pgvector` extension errors: enable extension with `CREATE EXTENSION IF NOT EXISTS vector;` as a superuser.
+- LLM errors or rate limits: check `GOOGLE_API_KEY` and `GOOGLE_MODEL`. Reduce concurrency or switch to a local test model (Ollama) for development.
+- Query parser keeps asking follow-ups: provide more context (file or function) or tune the `EXTRACTION_PROMPT` examples in `query_understanding.py`.
+- AST parsing failures during chunking: some files may use syntax unsupported by the parser; inspect `create_patch_child_chunks.py` logs and skip problematic files temporarily.
+
+- Want to run services individually for debugging? Examples:
+
+```bash
+# Start Postgres via docker-compose
+docker compose up -d postgres
+
+# Run hybrid API locally
+python3 hybrid_api.py
+
+# Run answer API locally
+python3 answer_api.py
+```
+
+## Contributing & Tests
+
+We welcome contributions. Quick guide:
+
+- Run tests locally with `pytest`.
+- Tests are in the `tests/` folder. To run a single test file:
+
+```bash
+pytest tests/test_query_understanding.py -q
+```
+
+- Add a unit test for any behavior you change. Keep tests small and focused.
+- Format Python with `black .` and run `flake8` if installed.
+- To propose a change: fork, create a topic branch, add tests, open a PR with a short description and the failing case if applicable.
+
+If you'd like, I can also add CI workflow examples (`.github/workflows/python-app.yml`) for running tests on PRs.
