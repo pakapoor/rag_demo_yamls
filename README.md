@@ -454,7 +454,7 @@ Metadata lives in Postgres JSONB alongside the vector and text, not in a separat
 
 ### Q5: Embedding model choice
 
-**bge-small-en-v1.5** (384-dim, BAAI) was chosen for V1 based on hardware constraints — the development machine is a Snapdragon X laptop with 16GB RAM running WSL2. Larger models (bge-large-en-v1.5, 1024-dim) would produce higher-quality embeddings but were too slow for iterative development on this hardware.
+**bge-small-en-v1.5** (384-dim, BAAI) was chosen for V1 based on hardware constraints — developed and tested on a Snapdragon X laptop (16GB RAM, WSL2 Ubuntu) and Mac M2 mini (8GB RAM, macOS). Larger models (bge-large-en-v1.5, 1024-dim) would produce higher-quality embeddings but were too slow for iterative development on these machines.
 
 The model runs fully self-hosted via FlagEmbedding — no API calls, no data leaving the machine.
 
@@ -551,6 +551,7 @@ CODE:
 - If `TLDR:` is missing → first sentence of `EXPLANATION` is used
 - If `CODE:` contains markdown fences → stripped before rendering
 - If `CODE:` bleeds into citations (lines starting with `[commit:`) → truncated at that boundary
+- If `negations` are present → matching results are filtered out before LLM generation (applied in `answer_api.py` before prompt assembly)
 
 The system prompt includes: *"If the answer is not supported by the context, say I don't know."* For a debugging tool, a confidently wrong answer is worse than no answer — an engineer might spend hours chasing a fabricated root cause.
 
@@ -566,7 +567,35 @@ query understanding → sufficiency check → hybrid search → prompt assembly 
 
 Agent orchestration (LangGraph, LangChain agents) solves the problem of *deciding what to do next* — branching mid-flow, calling tools, multi-step reasoning. V1 doesn't have that problem. Adding an agent framework would be unjustified complexity with no payoff.
 
+The closest V1 has to agentic behavior is the sufficiency gate in `query_understanding.py` — a fast LLM call that classifies query intent and decides whether to proceed to search or ask the user for more detail. This is a deliberate, lightweight form of conditional branching without the overhead of a full agent framework.
+
 V2 roadmap includes a multi-agent architecture: a **Triage Agent** (query classification), **Root Cause Agent** (retrieval + synthesis), and **Fix Suggester Agent** (patch recommendation), coordinated by a LangGraph orchestrator. That's when the framework investment becomes justified.
+
+---
+
+### Q11: Logging and observability in V1
+
+Structured JSON logging is built into `answer_api.py` using Python's standard `logging` module. Every request writes a newline-delimited JSON entry to `~/rag_logs/answer_api.log`:
+
+```json
+{
+  "timestamp": "2026-06-22T10:45:23.112000",
+  "endpoint": "/ask",
+  "query": "crash in groupby.pyx when NA values",
+  "response_time_seconds": 3.247,
+  "status": "ok",
+  "model": "gemini-3.1-flash-lite",
+  "results_used": 3,
+  "citations": 2,
+  "negations": []
+}
+```
+
+Low-confidence queries that triggered a follow-up are logged with `"status": "low_confidence"` — making it easy to measure the sufficiency gate's false-positive rate and tune the confidence threshold over time.
+
+Logs are written to `~/rag_logs/` (outside the project folder) to avoid Google Drive sync corruption — the same pattern used for Python virtual environments on this development setup.
+
+Full LLM pipeline observability (per-step tracing, hallucination detection, retrieval drift monitoring) is planned for V2 via Langfuse — a self-hosted, MIT-licensed LLM observability platform that plugs directly into the existing FastAPI backend.
 
 ---
 
